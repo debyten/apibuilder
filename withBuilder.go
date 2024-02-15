@@ -7,29 +7,27 @@ import (
 
 // With inject parent [] Middleware into *Multi instance
 type With struct {
-	original []Middleware
+	original   []Middleware
 	middleware []Middleware
 	m          *Multi
 }
 
-// With starts building subsequent routes with the specified middlewares,
-// it panics if no middleware is specified.
-// The middlewares will be executed in order.
+// With starts building subsequent routes with the specified middleware functions.
+// The middleware functions will be executed in order.
 //
 // Example:
-//  m.With(firstMiddleware, secondMiddleware,...).
-//    API("GET", "/path", handler1).
-//    API("POST", "/path2", handler2, myMiddlewareFunc).End()
+//
+//	m.With(firstMiddleware, secondMiddleware,...).
+//	  API("GET", "/path", handler1).
+//	  API("POST", "/path2", handler2, myMiddlewareFunc).End()
 //
 // Result stack:
-//  (GET /path): firstMiddleware => secondMiddleware => handler1
-//  (GET /path2): firstMiddleware => secondMiddleware => myMiddlewareFunc => handler2
+//
+//	(GET /path): firstMiddleware => secondMiddleware => handler1
+//	(GET /path2): firstMiddleware => secondMiddleware => myMiddlewareFunc => handler2
 func (m *Multi) With(middleware ...Middleware) *With {
-	if len(middleware) == 0 {
-		panic("no middleware specified for with")
-	}
 	return &With{
-		original: middleware,
+		original:   middleware,
 		middleware: middleware,
 		m:          m,
 	}
@@ -37,7 +35,7 @@ func (m *Multi) With(middleware ...Middleware) *With {
 
 func (w *With) NewGroup(middleware ...Middleware) *With {
 	return &With{
-		original: w.middleware,
+		original:   w.middleware,
 		middleware: append(w.original, middleware...),
 		m:          w.m,
 	}
